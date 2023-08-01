@@ -1,0 +1,43 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/@prisma-mongo/client"
+}
+
+model Merchant {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  description  String
+  image        String
+  url          String
+  publicKey    String
+  privateKey   String
+  identifier   String
+  Service      Service[]
+  Subscription Subscription[]
+}
+
+model Service {
+  id           String         @id @default(auto()) @map("_id") @db.ObjectId
+  name         String
+  description  String
+  image        String
+  Subscription Subscription[]
+  Merchant     Merchant?      @relation(fields: [merchantId], references: [id])
+  merchantId   String?        @db.ObjectId
+}
+
+model Subscription {
+  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  comment        String?
+  service        Service  @relation(fields: [serviceId], references: [id])
+  serviceId      String   @db.ObjectId
+  merhcant       Merchant @relation(fields: [merhcantId], references: [id])
+  merhcantId     String   @db.ObjectId
+  userId         String
+  subscriptionId String
+}
